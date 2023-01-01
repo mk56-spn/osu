@@ -1,8 +1,6 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,14 +39,14 @@ namespace osu.Game.Tests.Visual
 
         public bool TokenCreationRequested { get; private set; }
 
-        public Score SubmittedScore { get; private set; }
+        public Score SubmittedScore { get; private set; } = null!;
 
         public new bool PauseCooldownActive => base.PauseCooldownActive;
 
         public readonly List<JudgementResult> Results = new List<JudgementResult>();
 
         [Resolved]
-        private SpectatorClient spectatorClient { get; set; }
+        private SpectatorClient spectatorClient { get; set; } = null!;
 
         public TestPlayer(bool allowPause = true, bool showResults = true, bool pauseOnFocusLost = false)
             : base(new PlayerConfiguration
@@ -62,7 +60,7 @@ namespace osu.Game.Tests.Visual
 
         protected override bool HandleTokenRetrievalFailure(Exception exception) => false;
 
-        protected override APIRequest<APIScoreToken> CreateTokenRequest()
+        protected override APIRequest<APIScoreToken>? CreateTokenRequest()
         {
             TokenCreationRequested = true;
             return base.CreateTokenRequest();
@@ -87,7 +85,7 @@ namespace osu.Game.Tests.Visual
 
             if (autoplayMod != null)
             {
-                DrawableRuleset?.SetReplayScore(autoplayMod.CreateScoreFromReplayData(GameplayState.Beatmap, Mods.Value));
+                DrawableRuleset.SetReplayScore(autoplayMod.CreateScoreFromReplayData(GameplayState.Beatmap, Mods.Value));
                 return;
             }
 
@@ -110,7 +108,7 @@ namespace osu.Game.Tests.Visual
             // Specific to tests, the player can be disposed without OnExiting() ever being called.
             // We should make sure that the gameplay session has finished even in this case.
             if (LoadedBeatmapSuccessfully)
-                spectatorClient?.EndPlaying(GameplayState);
+                spectatorClient.EndPlaying(GameplayState);
         }
     }
 }

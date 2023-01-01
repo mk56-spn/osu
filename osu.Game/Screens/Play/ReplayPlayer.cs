@@ -1,8 +1,6 @@
 ﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -25,30 +23,22 @@ namespace osu.Game.Screens.Play
         private readonly bool replayIsFailedScore;
 
         // Disallow replays from failing. (see https://github.com/ppy/osu/issues/6108)
-        protected override bool CheckModsAllowFailure()
-        {
-            if (!replayIsFailedScore)
-                return false;
+        protected override bool CheckModsAllowFailure() =>
+            replayIsFailedScore && base.CheckModsAllowFailure();
 
-            return base.CheckModsAllowFailure();
-        }
-
-        public ReplayPlayer(Score score, PlayerConfiguration configuration = null)
+        public ReplayPlayer(Score score, PlayerConfiguration? configuration = null)
             : this((_, _) => score, configuration)
         {
             replayIsFailedScore = score.ScoreInfo.Rank == ScoreRank.F;
         }
 
-        public ReplayPlayer(Func<IBeatmap, IReadOnlyList<Mod>, Score> createScore, PlayerConfiguration configuration = null)
+        public ReplayPlayer(Func<IBeatmap, IReadOnlyList<Mod>, Score> createScore, PlayerConfiguration? configuration = null)
             : base(configuration)
         {
             this.createScore = createScore;
         }
 
-        protected override void PrepareReplay()
-        {
-            DrawableRuleset?.SetReplayScore(Score);
-        }
+        protected override void PrepareReplay() => DrawableRuleset.SetReplayScore(Score);
 
         protected override Score CreateScore(IBeatmap beatmap) => createScore(beatmap, Mods.Value);
 

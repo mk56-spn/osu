@@ -1,8 +1,6 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
-#nullable disable
-
 using osu.Framework.Allocation;
 using osu.Framework.Screens;
 using osu.Game.Online.Spectator;
@@ -14,7 +12,7 @@ namespace osu.Game.Screens.Play
     {
         private readonly Score score;
 
-        public SoloSpectatorPlayer(Score score, PlayerConfiguration configuration = null)
+        public SoloSpectatorPlayer(Score score, PlayerConfiguration? configuration = null)
             : base(score, configuration)
         {
             this.score = score;
@@ -47,8 +45,7 @@ namespace osu.Game.Screens.Play
         {
             base.Dispose(isDisposing);
 
-            if (SpectatorClient != null)
-                SpectatorClient.OnUserBeganPlaying -= userBeganPlaying;
+            SpectatorClient.OnUserBeganPlaying -= userBeganPlaying;
         }
     }
 }

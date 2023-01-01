@@ -1,8 +1,6 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
-#nullable disable
-
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -32,17 +30,17 @@ namespace osu.Game.Screens.OnlinePlay.Multiplayer
         protected override UserActivity InitialActivity => new UserActivity.InMultiplayerGame(Beatmap.Value.BeatmapInfo, Ruleset.Value);
 
         [Resolved]
-        private MultiplayerClient client { get; set; }
+        private MultiplayerClient client { get; set; } = null!;
 
-        private IBindable<bool> isConnected;
+        private IBindable<bool> isConnected = null!;
 
         private readonly TaskCompletionSource<bool> resultsReady = new TaskCompletionSource<bool>();
 
         private readonly MultiplayerRoomUser[] users;
 
-        private LoadingLayer loadingDisplay;
+        private LoadingLayer loadingDisplay = null!;
 
-        private MultiplayerGameplayLeaderboard multiplayerLeaderboard;
+        private MultiplayerGameplayLeaderboard multiplayerLeaderboard = null!;
 
         /// <summary>
         /// Construct a multiplayer player.
@@ -150,7 +148,7 @@ namespace osu.Game.Screens.OnlinePlay.Multiplayer
             }
         }
 
-        private void failAndBail(string message = null)
+        private void failAndBail(string? message = null)
         {
             if (!string.IsNullOrEmpty(message))
                 Logger.Log(message, LoggingTarget.Runtime, LogLevel.Important);
@@ -204,11 +202,8 @@ namespace osu.Game.Screens.OnlinePlay.Multiplayer
         {
             base.Dispose(isDisposing);
 
-            if (client != null)
-            {
-                client.GameplayStarted -= onGameplayStarted;
-                client.ResultsReady -= onResultsReady;
-            }
+            client.GameplayStarted -= onGameplayStarted;
+            client.ResultsReady -= onResultsReady;
         }
     }
 }

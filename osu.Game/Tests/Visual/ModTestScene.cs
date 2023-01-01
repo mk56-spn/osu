@@ -79,7 +79,7 @@ namespace osu.Game.Tests.Visual
 
                 if (currentTestData.ReplayFrames != null)
                 {
-                    DrawableRuleset?.SetReplayScore(new Score
+                    DrawableRuleset.SetReplayScore(new Score
                     {
                         Replay = new Replay { Frames = currentTestData.ReplayFrames },
                         ScoreInfo = new ScoreInfo { User = new APIUser { Username = @"Test" } },

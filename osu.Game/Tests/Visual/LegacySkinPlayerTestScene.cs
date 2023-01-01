@@ -1,8 +1,6 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
-#nullable disable
-
 using System.Linq;
 using NUnit.Framework;
 using osu.Framework.Allocation;
@@ -16,9 +14,9 @@ namespace osu.Game.Tests.Visual
     [TestFixture]
     public abstract partial class LegacySkinPlayerTestScene : PlayerTestScene
     {
-        protected LegacySkin LegacySkin { get; private set; }
+        protected LegacySkin LegacySkin { get; private set; } = null!;
 
-        private ISkinSource legacySkinSource;
+        private ISkinSource legacySkinSource = null!;
 
         protected override TestPlayer CreatePlayer(Ruleset ruleset) => new SkinProvidingPlayer(legacySkinSource);
 

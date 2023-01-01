@@ -1,12 +1,9 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
-#nullable disable
-
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Logging;
 using osu.Framework.Screens;
@@ -32,14 +29,14 @@ namespace osu.Game.Screens.Play
         private long? token;
 
         [Resolved]
-        private IAPIProvider api { get; set; }
+        private IAPIProvider api { get; set; } = null!;
 
         [Resolved]
-        private SpectatorClient spectatorClient { get; set; }
+        private SpectatorClient spectatorClient { get; set; } = null!;
 
-        private TaskCompletionSource<bool> scoreSubmissionSource;
+        private TaskCompletionSource<bool>? scoreSubmissionSource;
 
-        protected SubmittingPlayer(PlayerConfiguration configuration = null)
+        protected SubmittingPlayer(PlayerConfiguration? configuration = null)
             : base(configuration)
         {
         }
@@ -135,7 +132,7 @@ namespace osu.Game.Screens.Play
         }
 
         [Resolved]
-        private RealmAccess realm { get; set; }
+        private RealmAccess realm { get; set; } = null!;
 
         protected override void StartGameplay()
         {
@@ -173,8 +170,7 @@ namespace osu.Game.Screens.Play
         /// Construct a request to be used for retrieval of the score token.
         /// Can return null, at which point <see cref="HandleTokenRetrievalFailure"/> will be fired.
         /// </summary>
-        [CanBeNull]
-        protected abstract APIRequest<APIScoreToken> CreateTokenRequest();
+        protected abstract APIRequest<APIScoreToken>? CreateTokenRequest();
 
         /// <summary>
         /// Construct a request to submit the score.

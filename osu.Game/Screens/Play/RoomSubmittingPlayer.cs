@@ -1,8 +1,6 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
-#nullable disable
-
 using System.Diagnostics;
 using osu.Game.Online.API;
 using osu.Game.Online.Rooms;
@@ -18,14 +16,14 @@ namespace osu.Game.Screens.Play
         protected readonly PlaylistItem PlaylistItem;
         protected readonly Room Room;
 
-        protected RoomSubmittingPlayer(Room room, PlaylistItem playlistItem, PlayerConfiguration configuration = null)
+        protected RoomSubmittingPlayer(Room room, PlaylistItem playlistItem, PlayerConfiguration? configuration = null)
             : base(configuration)
         {
             Room = room;
             PlaylistItem = playlistItem;
         }
 
-        protected override APIRequest<APIScoreToken> CreateTokenRequest()
+        protected override APIRequest<APIScoreToken>? CreateTokenRequest()
         {
             if (!(Room.RoomID.Value is long roomId))
                 return null;
