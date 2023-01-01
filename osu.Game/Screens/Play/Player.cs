@@ -1,15 +1,12 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
-#nullable disable
-
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Audio;
 using osu.Framework.Audio.Sample;
@@ -54,7 +51,7 @@ namespace osu.Game.Screens.Play
         /// <summary>
         /// Raised after <see cref="StartGameplay"/> is called.
         /// </summary>
-        public event Action OnGameplayStarted;
+        public event Action? OnGameplayStarted;
 
         public override bool AllowBackButton => false; // handled by HoldForMenuButton
 
@@ -82,11 +79,11 @@ namespace osu.Game.Screens.Play
         /// </summary>
         protected virtual bool PauseOnFocusLost => true;
 
-        public Action<bool> RestartRequested;
+        public Action<bool>? RestartRequested;
 
         private bool isRestarting;
 
-        private Bindable<bool> mouseWheelDisabled;
+        private Bindable<bool> mouseWheelDisabled = null!;
 
         private readonly Bindable<bool> storyboardReplacesBackground = new Bindable<bool>();
 
@@ -102,45 +99,45 @@ namespace osu.Game.Screens.Play
         public IBindable<bool> ShowingOverlayComponents = new Bindable<bool>();
 
         [Resolved]
-        private ScoreManager scoreManager { get; set; }
+        private ScoreManager scoreManager { get; set; } = null!;
 
         [Resolved]
-        private IAPIProvider api { get; set; }
+        private IAPIProvider api { get; set; } = null!;
 
         [Resolved]
-        private MusicController musicController { get; set; }
+        private MusicController musicController { get; set; } = null!;
 
-        public GameplayState GameplayState { get; private set; }
+        public GameplayState GameplayState { get; private set; } = null!;
 
-        private Ruleset ruleset;
+        private Ruleset? ruleset;
 
-        private Sample sampleRestart;
+        private Sample? sampleRestart;
 
-        public BreakOverlay BreakOverlay;
+        public BreakOverlay BreakOverlay = null!;
 
         /// <summary>
         /// Whether the gameplay is currently in a break.
         /// </summary>
         public readonly IBindable<bool> IsBreakTime = new BindableBool();
 
-        private BreakTracker breakTracker;
+        private BreakTracker breakTracker = null!;
 
-        private SkipOverlay skipIntroOverlay;
-        private SkipOverlay skipOutroOverlay;
+        private SkipOverlay skipIntroOverlay = null!;
+        private SkipOverlay skipOutroOverlay = null!;
 
-        protected ScoreProcessor ScoreProcessor { get; private set; }
+        protected ScoreProcessor ScoreProcessor { get; private set; } = null!;
 
-        protected HealthProcessor HealthProcessor { get; private set; }
+        protected HealthProcessor HealthProcessor { get; private set; } = null!;
 
-        protected DrawableRuleset DrawableRuleset { get; private set; }
+        protected DrawableRuleset DrawableRuleset { get; private set; } = null!;
 
-        protected HUDOverlay HUDOverlay { get; private set; }
+        protected HUDOverlay HUDOverlay { get; private set; } = null!;
 
-        public bool LoadedBeatmapSuccessfully => DrawableRuleset?.Objects.Any() == true;
+        public bool LoadedBeatmapSuccessfully => DrawableRuleset.Objects.Any();
 
-        protected GameplayClockContainer GameplayClockContainer { get; private set; }
+        protected GameplayClockContainer GameplayClockContainer { get; private set; } = null!;
 
-        public DimmableStoryboard DimmableStoryboard { get; private set; }
+        public DimmableStoryboard DimmableStoryboard { get; private set; } = null!;
 
         /// <summary>
         /// Whether failing should be allowed.
@@ -154,19 +151,19 @@ namespace osu.Game.Screens.Play
         /// The score for the current play session.
         /// Available only after the player is loaded.
         /// </summary>
-        public Score Score { get; private set; }
+        public Score Score { get; private set; } = null!;
 
         /// <summary>
         /// Create a new player instance.
         /// </summary>
-        protected Player(PlayerConfiguration configuration = null)
+        protected Player(PlayerConfiguration? configuration = null)
         {
             Configuration = configuration ?? new PlayerConfiguration();
         }
 
-        private ScreenSuspensionHandler screenSuspension;
+        private ScreenSuspensionHandler? screenSuspension;
 
-        private DependencyContainer dependencies;
+        private DependencyContainer dependencies = null!;
 
         protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent)
             => dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
@@ -195,7 +192,7 @@ namespace osu.Game.Screens.Play
         }
 
         [BackgroundDependencyLoader(true)]
-        private void load(AudioManager audio, OsuConfigManager config, OsuGameBase game, CancellationToken cancellationToken)
+        private void load(AudioManager audio, OsuConfigManager config, OsuGameBase? game, CancellationToken cancellationToken)
         {
             var gameplayMods = Mods.Value.Select(m => m.DeepClone()).ToArray();
 
@@ -208,9 +205,9 @@ namespace osu.Game.Screens.Play
             if (Beatmap.Value is DummyWorkingBeatmap)
                 return;
 
-            IBeatmap playableBeatmap = loadPlayableBeatmap(gameplayMods, cancellationToken);
+            IBeatmap? playableBeatmap = loadPlayableBeatmap(gameplayMods, cancellationToken);
 
-            if (playableBeatmap == null)
+            if (playableBeatmap == null || ruleset == null)
                 return;
 
             sampleRestart = audio.Samples.Get(@"Gameplay/restart");
@@ -509,7 +506,7 @@ namespace osu.Game.Screens.Play
             }
         }
 
-        private IBeatmap loadPlayableBeatmap(Mod[] gameplayMods, CancellationToken cancellationToken)
+        private IBeatmap? loadPlayableBeatmap(Mod[] gameplayMods, CancellationToken cancellationToken)
         {
             IBeatmap playable;
 
@@ -635,7 +632,7 @@ namespace osu.Game.Screens.Play
         /// <param name="time">The destination time to seek to.</param>
         public void Seek(double time) => GameplayClockContainer.Seek(time);
 
-        private ScheduledDelegate frameStablePlaybackResetDelegate;
+        private ScheduledDelegate? frameStablePlaybackResetDelegate;
 
         /// <summary>
         /// Specify and seek to a custom start time from which gameplay should be observed.
@@ -688,13 +685,13 @@ namespace osu.Game.Screens.Play
         /// Once set, this can *only* be cancelled by rewinding, ie. if <see cref="JudgementProcessor.HasCompleted">ScoreProcessor.HasCompleted</see> becomes <see langword="false"/>.
         /// Even if the user requests an exit, it will forcefully proceed to the results screen (see special case in <see cref="OnExiting"/>).
         /// </remarks>
-        private ScheduledDelegate resultsDisplayDelegate;
+        private ScheduledDelegate? resultsDisplayDelegate;
 
         /// <summary>
         /// A task which asynchronously prepares a completed score for display at results.
         /// This may include performing net requests or importing the score into the database, generally to ensure things are in a sane state for the play session.
         /// </summary>
-        private Task<ScoreInfo> prepareScoreForDisplayTask;
+        private Task<ScoreInfo>? prepareScoreForDisplayTask;
 
         /// <summary>
         /// Handles changes in player state which may progress the completion of gameplay / this screen's lifetime.
@@ -848,8 +845,7 @@ namespace osu.Game.Screens.Play
             }
         }
 
-        [CanBeNull]
-        protected virtual GameplayLeaderboard CreateGameplayLeaderboard() => null;
+        protected virtual GameplayLeaderboard? CreateGameplayLeaderboard() => null;
 
         protected virtual void AddLeaderboardToHUD(GameplayLeaderboard leaderboard) => HUDOverlay.LeaderboardFlow.Add(leaderboard);
 
@@ -860,9 +856,9 @@ namespace osu.Game.Screens.Play
 
         #region Fail Logic
 
-        protected FailOverlay FailOverlay { get; private set; }
+        protected FailOverlay FailOverlay { get; private set; } = null!;
 
-        private FailAnimation failAnimationLayer;
+        private FailAnimation failAnimationLayer = null!;
 
         private bool onFail()
         {
@@ -922,7 +918,7 @@ namespace osu.Game.Screens.Play
         /// </summary>
         private const double pause_cooldown = 1000;
 
-        protected PauseOverlay PauseOverlay { get; private set; }
+        protected PauseOverlay PauseOverlay { get; private set; } = null!;
 
         private double? lastPauseActionTime;
 
@@ -1070,7 +1066,7 @@ namespace osu.Game.Screens.Play
         public override bool OnExiting(ScreenExitEvent e)
         {
             screenSuspension?.RemoveAndDisposeImmediately();
-            failAnimationLayer?.RemoveFilters();
+            failAnimationLayer.RemoveFilters();
 
             if (LoadedBeatmapSuccessfully)
             {
@@ -1114,7 +1110,7 @@ namespace osu.Game.Screens.Play
             if (DrawableRuleset.ReplayScore != null)
                 return Task.CompletedTask;
 
-            LegacyByteArrayReader replayReader = null;
+            LegacyByteArrayReader? replayReader = null;
 
             if (score.ScoreInfo.Ruleset.IsLegacyRuleset())
             {
