@@ -1,15 +1,12 @@
 ﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
-#nullable disable
-
 using System.Linq;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Extensions.EnumExtensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
@@ -19,7 +16,6 @@ using osu.Framework.Input.Events;
 using osu.Game.Database;
 using osu.Framework.Localisation;
 using osu.Game.Graphics;
-using osu.Game.Graphics.Backgrounds;
 using osu.Game.Graphics.Containers;
 using osu.Game.Graphics.Sprites;
 using osu.Game.Input.Bindings;
@@ -39,10 +35,10 @@ namespace osu.Game.Overlays.Toolbar
         }
 
         [Resolved]
-        private TextureStore textures { get; set; }
+        private TextureStore textures { get; set; } = null!;
 
         [Resolved]
-        private ReadableKeyCombinationProvider keyCombinationProvider { get; set; }
+        private ReadableKeyCombinationProvider keyCombinationProvider { get; set; } = null!;
 
         public void SetIcon(string texture) =>
             SetIcon(new Sprite
@@ -81,7 +77,7 @@ namespace osu.Game.Overlays.Toolbar
         protected FillFlowContainer Flow;
 
         [Resolved]
-        private RealmAccess realm { get; set; }
+        private RealmAccess realm { get; set; } = null!;
 
         protected ToolbarButton()
         {
@@ -216,37 +212,6 @@ namespace osu.Game.Overlays.Toolbar
                 if (!string.IsNullOrEmpty(keyBindingString))
                     keyBindingTooltip.Text = $" ({keyBindingString})";
             }
-        }
-    }
-
-    public partial class OpaqueBackground : Container
-    {
-        public OpaqueBackground()
-        {
-            RelativeSizeAxes = Axes.Both;
-            Masking = true;
-            MaskingSmoothness = 0;
-            EdgeEffect = new EdgeEffectParameters
-            {
-                Type = EdgeEffectType.Shadow,
-                Colour = Color4.Black.Opacity(40),
-                Radius = 5,
-            };
-
-            Children = new Drawable[]
-            {
-                new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Colour = OsuColour.Gray(30)
-                },
-                new Triangles
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    ColourLight = OsuColour.Gray(40),
-                    ColourDark = OsuColour.Gray(20),
-                },
-            };
         }
     }
 }
