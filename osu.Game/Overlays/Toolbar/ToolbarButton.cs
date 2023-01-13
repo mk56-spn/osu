@@ -81,7 +81,7 @@ namespace osu.Game.Overlays.Toolbar
 
         protected ToolbarButton()
         {
-            Width = Toolbar.HEIGHT;
+            Width = 40;
             RelativeSizeAxes = Axes.Y;
 
             Children = new Drawable[]

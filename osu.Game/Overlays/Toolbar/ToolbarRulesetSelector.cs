@@ -6,7 +6,6 @@
 using System.Collections.Generic;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Effects;
 using osuTK;
 using osuTK.Graphics;
 using osu.Framework.Graphics.Shapes;
@@ -36,29 +35,23 @@ namespace osu.Game.Overlays.Toolbar
         [BackgroundDependencyLoader]
         private void load(AudioManager audio)
         {
+            AddInternal(new Box
+            {
+                Depth = 1,
+                Colour = Colour4.FromHex("#1F2624"),
+                RelativeSizeAxes = Axes.Both
+            });
+
             AddRangeInternal(new[]
             {
-                new OpaqueBackground
+                ModeButtonLine = new CircularContainer
                 {
-                    Depth = 1,
-                },
-                ModeButtonLine = new Container
-                {
-                    Size = new Vector2(Toolbar.HEIGHT, 3),
+                    Size = new Vector2(20, 3),
                     Anchor = Anchor.BottomLeft,
-                    Origin = Anchor.TopLeft,
+                    Origin = Anchor.BottomLeft,
+                    Y = -5,
                     Masking = true,
-                    EdgeEffect = new EdgeEffectParameters
-                    {
-                        Type = EdgeEffectType.Glow,
-                        Colour = new Color4(255, 194, 224, 100),
-                        Radius = 15,
-                        Roundness = 15,
-                    },
-                    Child = new Box
-                    {
-                        RelativeSizeAxes = Axes.Both,
-                    }
+                    Child = new Box { RelativeSizeAxes = Axes.Both, }
                 }
             });
 
@@ -89,7 +82,7 @@ namespace osu.Game.Overlays.Toolbar
         {
             if (SelectedTab != null)
             {
-                ModeButtonLine.MoveToX(SelectedTab.DrawPosition.X, !hasInitialPosition ? 0 : 200, Easing.OutQuint);
+                ModeButtonLine.MoveToX(SelectedTab.DrawPosition.X + 20, !hasInitialPosition ? 0 : 200, Easing.OutQuint);
 
                 if (hasInitialPosition)
                     selectionSamples[SelectedTab.Value.ShortName]?.Play();
@@ -108,6 +101,7 @@ namespace osu.Game.Overlays.Toolbar
 
         protected override TabFillFlowContainer CreateTabFlow() => new TabFillFlowContainer
         {
+            Padding = new MarginPadding { Horizontal = 10 },
             RelativeSizeAxes = Axes.Y,
             AutoSizeAxes = Axes.X,
             Direction = FillDirection.Horizontal,

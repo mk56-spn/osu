@@ -1,14 +1,11 @@
 ﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
-#nullable disable
-
-using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.UserInterface;
 using osu.Game.Rulesets;
-using osuTK.Graphics;
 using osu.Framework.Graphics;
 using osu.Framework.Input.Events;
+using osuTK;
 
 namespace osu.Game.Overlays.Toolbar
 {
@@ -41,31 +38,18 @@ namespace osu.Game.Overlays.Toolbar
         {
             public bool Active
             {
-                set
-                {
-                    if (value)
-                    {
-                        IconContainer.Colour = Color4.White;
-                        IconContainer.EdgeEffect = new EdgeEffectParameters
-                        {
-                            Type = EdgeEffectType.Glow,
-                            Colour = new Color4(255, 194, 224, 100),
-                            Radius = 15,
-                            Roundness = 15,
-                        };
-                    }
-                    else
-                    {
-                        IconContainer.Colour = new Color4(255, 194, 224, 255);
-                        IconContainer.EdgeEffect = new EdgeEffectParameters();
-                    }
-                }
+                set => IconContainer.Colour = value ? Colour4.FromHex("#00FFAA") : Colour4.White;
             }
 
             protected override bool OnClick(ClickEvent e)
             {
                 Parent.TriggerClick();
                 return base.OnClick(e);
+            }
+
+            public RulesetButton()
+            {
+                IconContainer.Size = new Vector2(20);
             }
         }
     }

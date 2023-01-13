@@ -23,8 +23,11 @@ namespace osu.Game.Overlays.Toolbar
 {
     public partial class Toolbar : OverlayContainer, IKeyBindingHandler<GlobalAction>
     {
-        public const float HEIGHT = 40;
+        public const float HEIGHT = 50;
         public const float TOOLTIP_HEIGHT = 30;
+
+        [Cached]
+        private OverlayColourProvider colourProvider { get; set; } = new OverlayColourProvider(OverlayColourScheme.Green);
 
         /// <summary>
         /// Whether the user hid this <see cref="Toolbar"/> with <see cref="GlobalAction.ToggleToolbar"/>.
