@@ -97,7 +97,7 @@ namespace osu.Game.Overlays.Toolbar
                                 {
                                     new Box
                                     {
-                                        Colour = OsuColour.Gray(0.1f),
+                                        Colour = Colour4.FromHex("#293330"),
                                         RelativeSizeAxes = Axes.Both,
                                     },
                                     new FillFlowContainer
@@ -134,7 +134,7 @@ namespace osu.Game.Overlays.Toolbar
                                     },
                                     new Box
                                     {
-                                        Colour = ColourInfo.GradientHorizontal(OsuColour.Gray(0.1f).Opacity(0), OsuColour.Gray(0.1f)),
+                                        Colour = ColourInfo.GradientHorizontal(Colour4.FromHex("#293330").Opacity(0), Colour4.FromHex("#293330")),
                                         Width = 50,
                                         RelativeSizeAxes = Axes.Y,
                                         Anchor = Anchor.TopRight,
@@ -153,7 +153,7 @@ namespace osu.Game.Overlays.Toolbar
                                 {
                                     new Box
                                     {
-                                        Colour = OsuColour.Gray(0.1f),
+                                        Colour = Colour4.FromHex("#293330"),
                                         RelativeSizeAxes = Axes.Both,
                                     },
                                     new FillFlowContainer
@@ -220,7 +220,7 @@ namespace osu.Game.Overlays.Toolbar
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = OsuColour.Gray(0.1f),
+                        Colour = Colour4.FromHex("#293330"),
                     },
                     gradientBackground = new Box
                     {
