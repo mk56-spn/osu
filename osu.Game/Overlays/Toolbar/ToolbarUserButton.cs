@@ -8,6 +8,7 @@ using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
+using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Graphics;
 using osu.Game.Graphics.UserInterface;
@@ -40,6 +41,18 @@ namespace osu.Game.Overlays.Toolbar
         [BackgroundDependencyLoader]
         private void load(OsuColour colours, IAPIProvider api, LoginOverlay? login)
         {
+            RelativeSizeAxes = Axes.None;
+            Margin = new MarginPadding { Top = -10 };
+            Height = 70;
+            Masking = true;
+            CornerRadius = 5;
+            EdgeEffect = new EdgeEffectParameters
+            {
+                Type = EdgeEffectType.Shadow,
+                Radius = 4,
+                Colour = Color4.Black.Opacity(0.1f),
+            };
+            Flow.Padding = new MarginPadding { Horizontal = 12 };
             Flow.Add(new Container
             {
                 Masking = true,
@@ -78,6 +91,12 @@ namespace osu.Game.Overlays.Toolbar
                 }
             });
 
+            Add(new Box
+            {
+                Depth = 1,
+                RelativeSizeAxes = Axes.Both,
+                Colour = Colour4.FromHex("#3D4C47")
+            });
             apiState = api.State.GetBoundCopy();
             apiState.BindValueChanged(onlineStateChanged, true);
 
@@ -89,7 +108,6 @@ namespace osu.Game.Overlays.Toolbar
 
         private void userChanged(ValueChangedEvent<APIUser> user) => Schedule(() =>
         {
-            Text = user.NewValue.Username;
             avatar.User = user.NewValue;
         });
 
