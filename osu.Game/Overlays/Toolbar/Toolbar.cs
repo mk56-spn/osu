@@ -135,7 +135,7 @@ namespace osu.Game.Overlays.Toolbar
                                     new Box
                                     {
                                         Colour = ColourInfo.GradientHorizontal(colourProvider.Background4.Opacity(0), colourProvider.Background4),
-                                        Width = 50,
+                                        Width = HEIGHT,
                                         RelativeSizeAxes = Axes.Y,
                                         Anchor = Anchor.TopRight,
                                         Origin = Anchor.TopRight,

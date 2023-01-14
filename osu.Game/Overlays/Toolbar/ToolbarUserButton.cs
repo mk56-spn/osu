@@ -8,7 +8,6 @@ using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
-using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.Sprites;
 using osu.Game.Graphics;
 using osu.Game.Graphics.UserInterface;
@@ -53,13 +52,6 @@ namespace osu.Game.Overlays.Toolbar
                 Colour = Color4.Black.Opacity(0.1f),
             };
 
-            Add(new Box
-            {
-                Depth = 1,
-                RelativeSizeAxes = Axes.Both,
-                Colour = colourProvider.Background2
-            });
-
             Flow.Padding = new MarginPadding { Horizontal = 12 };
             Flow.Add(new Container
             {
@@ -96,6 +88,15 @@ namespace osu.Game.Overlays.Toolbar
                         RelativeSizeAxes = Axes.Both,
                         Colour = colours.YellowLight,
                     },
+                    new SpriteIcon
+                    {
+                        Y = 20,
+                        Colour = colourProvider.Background6,
+                        Anchor = Anchor.BottomCentre,
+                        Origin = Anchor.BottomCentre,
+                        Size = new Vector2(15),
+                        Icon = FontAwesome.Solid.ChevronDown
+                    }
                 }
             });
 
