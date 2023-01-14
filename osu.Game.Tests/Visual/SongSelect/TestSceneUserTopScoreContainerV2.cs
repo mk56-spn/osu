@@ -38,7 +38,7 @@ namespace osu.Game.Tests.Visual.SongSelect
                 Origin = Anchor.BottomCentre,
                 Anchor = Anchor.Centre,
                 AutoSizeAxes = Axes.Y,
-                Width = 500,
+                Width = 900,
                 Children = new Drawable[]
                 {
                     new Box
