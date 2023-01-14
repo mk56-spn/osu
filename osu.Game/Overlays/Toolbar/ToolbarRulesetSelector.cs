@@ -22,6 +22,9 @@ namespace osu.Game.Overlays.Toolbar
 {
     public partial class ToolbarRulesetSelector : RulesetSelector
     {
+        [Resolved]
+        private OverlayColourProvider colourProvider { get; set; } = null!;
+
         protected Drawable ModeButtonLine { get; private set; }
 
         private readonly Dictionary<string, Sample> selectionSamples = new Dictionary<string, Sample>();
@@ -38,7 +41,7 @@ namespace osu.Game.Overlays.Toolbar
             AddInternal(new Box
             {
                 Depth = 1,
-                Colour = Colour4.FromHex("#1F2624"),
+                Colour = colourProvider.Background5,
                 RelativeSizeAxes = Axes.Both
             });
 

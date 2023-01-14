@@ -27,7 +27,7 @@ namespace osu.Game.Overlays.Toolbar
         public const float TOOLTIP_HEIGHT = 30;
 
         [Cached]
-        private OverlayColourProvider colourProvider { get; set; } = new OverlayColourProvider(OverlayColourScheme.Green);
+        private OverlayColourProvider colourProvider { get; set; } = new OverlayColourProvider(OverlayColourScheme.Purple);
 
         /// <summary>
         /// Whether the user hid this <see cref="Toolbar"/> with <see cref="GlobalAction.ToggleToolbar"/>.
@@ -97,7 +97,7 @@ namespace osu.Game.Overlays.Toolbar
                                 {
                                     new Box
                                     {
-                                        Colour = Colour4.FromHex("#293330"),
+                                        Colour = colourProvider.Background4,
                                         RelativeSizeAxes = Axes.Both,
                                     },
                                     new FillFlowContainer
@@ -134,7 +134,7 @@ namespace osu.Game.Overlays.Toolbar
                                     },
                                     new Box
                                     {
-                                        Colour = ColourInfo.GradientHorizontal(Colour4.FromHex("#293330").Opacity(0), Colour4.FromHex("#293330")),
+                                        Colour = ColourInfo.GradientHorizontal(colourProvider.Background4.Opacity(0), colourProvider.Background4),
                                         Width = 50,
                                         RelativeSizeAxes = Axes.Y,
                                         Anchor = Anchor.TopRight,
@@ -153,7 +153,7 @@ namespace osu.Game.Overlays.Toolbar
                                 {
                                     new Box
                                     {
-                                        Colour = Colour4.FromHex("#293330"),
+                                        Colour = colourProvider.Background4,
                                         RelativeSizeAxes = Axes.Both,
                                     },
                                     new FillFlowContainer
@@ -210,9 +210,10 @@ namespace osu.Game.Overlays.Toolbar
         {
             public Bindable<bool> ShowGradient { get; } = new BindableBool();
 
-            private readonly Box gradientBackground;
+            private Box gradientBackground;
 
-            public ToolbarBackground()
+            [BackgroundDependencyLoader]
+            private void load(OverlayColourProvider colourProvider)
             {
                 RelativeSizeAxes = Axes.Both;
                 Children = new Drawable[]
@@ -220,7 +221,7 @@ namespace osu.Game.Overlays.Toolbar
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = Colour4.FromHex("#293330"),
+                        Colour = colourProvider.Background4,
                     },
                     gradientBackground = new Box
                     {

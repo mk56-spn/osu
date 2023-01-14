@@ -1,6 +1,7 @@
 ﻿// Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
+using osu.Framework.Allocation;
 using osu.Framework.Graphics.UserInterface;
 using osu.Game.Rulesets;
 using osu.Framework.Graphics;
@@ -36,9 +37,12 @@ namespace osu.Game.Overlays.Toolbar
 
         private partial class RulesetButton : ToolbarButton
         {
+            [Resolved]
+            private OverlayColourProvider colourProvider { get; set; } = null!;
+
             public bool Active
             {
-                set => IconContainer.Colour = value ? Colour4.FromHex("#00FFAA") : Colour4.White;
+                set => IconContainer.Colour = value ? colourProvider.Highlight1 : Colour4.White;
             }
 
             protected override bool OnClick(ClickEvent e)

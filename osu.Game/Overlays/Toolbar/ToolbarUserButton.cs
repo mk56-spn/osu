@@ -39,7 +39,7 @@ namespace osu.Game.Overlays.Toolbar
         }
 
         [BackgroundDependencyLoader]
-        private void load(OsuColour colours, IAPIProvider api, LoginOverlay? login)
+        private void load(OsuColour colours, IAPIProvider api, LoginOverlay? login, OverlayColourProvider colourProvider)
         {
             RelativeSizeAxes = Axes.None;
             Margin = new MarginPadding { Top = -10 };
@@ -52,6 +52,14 @@ namespace osu.Game.Overlays.Toolbar
                 Radius = 4,
                 Colour = Color4.Black.Opacity(0.1f),
             };
+
+            Add(new Box
+            {
+                Depth = 1,
+                RelativeSizeAxes = Axes.Both,
+                Colour = colourProvider.Background2
+            });
+
             Flow.Padding = new MarginPadding { Horizontal = 12 };
             Flow.Add(new Container
             {
@@ -91,12 +99,6 @@ namespace osu.Game.Overlays.Toolbar
                 }
             });
 
-            Add(new Box
-            {
-                Depth = 1,
-                RelativeSizeAxes = Axes.Both,
-                Colour = Colour4.FromHex("#3D4C47")
-            });
             apiState = api.State.GetBoundCopy();
             apiState.BindValueChanged(onlineStateChanged, true);
 

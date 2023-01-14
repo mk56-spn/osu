@@ -18,13 +18,13 @@ namespace osu.Game.Overlays.Toolbar
         }
 
         [BackgroundDependencyLoader]
-        private void load()
+        private void load(OverlayColourProvider colourProvider)
         {
             Add(new Box
             {
                 Depth = 1,
                 RelativeSizeAxes = Axes.Both,
-                Colour = Colour4.FromHex("#3D4C47")
+                Colour = colourProvider.Background2
             });
             RelativeSizeAxes = Axes.None;
             Margin = new MarginPadding { Top = -10 };
