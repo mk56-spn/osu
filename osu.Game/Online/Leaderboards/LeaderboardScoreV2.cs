@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using osu.Framework.Allocation;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
@@ -30,9 +31,9 @@ using osu.Game.Scoring;
 using osu.Game.Users.Drawables;
 using osuTK;
 using osuTK.Graphics;
-using osu.Game.Online.API;
 using osu.Game.Online.API.Requests.Responses;
 using osu.Game.Resources.Localisation.Web;
+using osu.Game.Rulesets.Mods;
 using osu.Game.Utils;
 
 namespace osu.Game.Online.Leaderboards
@@ -44,14 +45,12 @@ namespace osu.Game.Online.Leaderboards
         public readonly ScoreInfo Score;
 
         private const float corner_radius = 10;
-        private const float edge_margin = 5;
         private const float rank_width = 35;
         private static readonly Vector2 shear = new Vector2(0.15f, 0);
 
         protected Container RankContainer { get; private set; }
 
         private readonly int? rank;
-        private readonly bool isOnlineScope;
 
         private Box background;
         private Container content;
@@ -62,7 +61,7 @@ namespace osu.Game.Online.Leaderboards
         public OsuSpriteText ScoreText { get; private set; }
 
         private FillFlowContainer flagBadgeAndDateContainer;
-        private FillFlowContainer<ModIcon> modsContainer;
+        private FillFlowContainer<ColouredModSwitchTiny> modsContainer;
 
         private List<ScoreComponentLabel> statisticsLabels;
 
@@ -81,19 +80,18 @@ namespace osu.Game.Online.Leaderboards
         public ITooltip<ScoreInfo> GetCustomTooltip() => new LeaderboardScoreTooltip();
         public virtual ScoreInfo TooltipContent => Score;
 
-        public LeaderboardScoreV2(ScoreInfo score, int? rank, bool isOnlineScope = true)
+        public LeaderboardScoreV2(ScoreInfo score, int? rank)
         {
             Score = score;
 
             this.rank = rank;
-            this.isOnlineScope = isOnlineScope;
 
             RelativeSizeAxes = Axes.X;
             Height = HEIGHT;
         }
 
         [BackgroundDependencyLoader]
-        private void load(IAPIProvider api, OsuColour colour, ScoreManager scoreManager)
+        private void load(ScoreManager scoreManager, OsuColour colours)
         {
             var user = Score.User;
 
@@ -129,45 +127,60 @@ namespace osu.Game.Online.Leaderboards
                         Width = rank_width,
                     },
                     createMainContent(user),
+
                     new FillFlowContainer
                     {
-                        Shear = -shear,
+                        X = -15,
+                        Spacing = new Vector2(0, 5),
+                        Direction = FillDirection.Vertical,
                         AutoSizeAxes = Axes.Both,
-                        Anchor = Anchor.TopRight,
-                        Origin = Anchor.TopRight,
-                        Direction = FillDirection.Horizontal,
-                        Spacing = new Vector2(5f, 0f),
+                        Anchor = Anchor.CentreRight,
+                        Origin = Anchor.CentreRight,
                         Children = new Drawable[]
                         {
-                            ScoreText = new OsuSpriteText
+                            new FillFlowContainer
                             {
-                                Current = scoreManager.GetBindableTotalScoreString(Score),
-                                Font = OsuFont.GetFont(size: 24, weight: FontWeight.SemiBold, fixedWidth: false),
-                            },
-                            RankContainer = new Container
-                            {
-                                Size = new Vector2(40f, 20f),
-                                Children = new[]
+                                Shear = -shear,
+                                AutoSizeAxes = Axes.Both,
+                                Direction = FillDirection.Horizontal,
+                                Spacing = new Vector2(10, 0f),
+                                Children = new Drawable[]
                                 {
-                                    scoreRank = new UpdateableRank(Score.Rank)
+                                    ScoreText = new OsuSpriteText
                                     {
-                                        Anchor = Anchor.Centre,
-                                        Origin = Anchor.Centre,
-                                        Size = new Vector2(40f)
+                                        Anchor = Anchor.CentreLeft,
+                                        Origin = Anchor.CentreLeft,
+                                        Current = scoreManager.GetBindableTotalScoreString(Score),
+                                        Font = OsuFont.GetFont(size: 24, weight: FontWeight.SemiBold, fixedWidth: false),
+                                    },
+                                    RankContainer = new Container
+                                    {
+                                        Anchor = Anchor.CentreLeft,
+                                        Origin = Anchor.CentreLeft,
+                                        Size = new Vector2(40f, 20f),
+                                        Children = new[]
+                                        {
+                                            scoreRank = new UpdateableRank(Score.Rank)
+                                            {
+                                                Y = 2, // Better align with text
+                                                Anchor = Anchor.Centre,
+                                                Origin = Anchor.Centre,
+                                                Size = new Vector2(32)
+                                            },
+                                        },
                                     },
                                 },
                             },
-                        },
-                    },
-                    modsContainer = new FillFlowContainer<ModIcon>
-                    {
-                        Shear = -shear,
-                        Anchor = Anchor.BottomRight,
-                        Origin = Anchor.BottomRight,
-                        AutoSizeAxes = Axes.Both,
-                        Direction = FillDirection.Horizontal,
-                        ChildrenEnumerable = Score.Mods.Select(mod => new ModIcon(mod) { Scale = new Vector2(0.375f) })
-                    },
+                            modsContainer = new FillFlowContainer<ColouredModSwitchTiny>
+                            {
+                                Spacing = new Vector2(2, 0),
+                                Shear = -shear,
+                                AutoSizeAxes = Axes.Both,
+                                Direction = FillDirection.Horizontal,
+                                ChildrenEnumerable = Score.Mods.Select(mod => new ColouredModSwitchTiny(mod) { Scale = new Vector2(0.375f) })
+                            },
+                        }
+                    }
                 },
             };
 
@@ -455,6 +468,23 @@ namespace osu.Game.Online.Leaderboards
             {
                 CornerRadius = corner_radius;
                 Masking = true;
+            }
+        }
+
+        private partial class ColouredModSwitchTiny : ModSwitchTiny
+        {
+            [Resolved]
+            private OsuColour colours { get; set; } = null!;
+
+            public ColouredModSwitchTiny([NotNull] IMod mod)
+                : base(mod)
+            {
+            }
+
+            protected override void UpdateState()
+            {
+                AcronymText.Colour = Colour4.FromHex("#555555");
+                Background.Colour = colours.Yellow;
             }
         }
     }

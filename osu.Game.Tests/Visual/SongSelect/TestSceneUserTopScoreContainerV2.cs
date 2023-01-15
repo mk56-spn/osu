@@ -37,7 +37,7 @@ namespace osu.Game.Tests.Visual.SongSelect
                 Width = 900,
                 Children = new Drawable[]
                 {
-                    topScoreContainer = new UserTopScoreContainerV2<ScoreInfo>(s => new LeaderboardScoreV2(s, s.Position, false))
+                    topScoreContainer = new UserTopScoreContainerV2<ScoreInfo>(s => new LeaderboardScoreV2(s, s.Position))
                     {
                         Origin = Anchor.BottomCentre,
                         Anchor = Anchor.BottomCentre,
