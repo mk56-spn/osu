@@ -95,14 +95,13 @@ namespace osu.Game.Online.Leaderboards
         [BackgroundDependencyLoader]
         private void load(IAPIProvider api, OsuColour colour, ScoreManager scoreManager)
         {
-            Shear = shear;
-
             var user = Score.User;
 
             statisticsLabels = GetStatistics(Score).Select(s => new ScoreComponentLabel(s)).ToList();
 
             Child = content = new Container
             {
+                Shear = shear,
                 RelativeSizeAxes = Axes.Both,
                 Children = new Drawable[]
                 {
@@ -122,6 +121,10 @@ namespace osu.Game.Online.Leaderboards
                     },
                     new RankLabel(rank)
                     {
+                        X = 15,
+                        Shear = -shear,
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
                         RelativeSizeAxes = Axes.Y,
                         Width = rank_width,
                     },
@@ -299,7 +302,7 @@ namespace osu.Game.Online.Leaderboards
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Font = OsuFont.GetFont(size: 20, italics: true),
+                    Font = OsuFont.GetFont(size: 20, weight: FontWeight.SemiBold, italics: true),
                     Text = rank == null ? "-" : rank.Value.FormatRank()
                 };
             }
@@ -310,6 +313,8 @@ namespace osu.Game.Online.Leaderboards
         private Container createMainContent(APIUser user) =>
             new Container
             {
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.CentreLeft,
                 Masking = true,
                 CornerRadius = corner_radius,
                 Padding = new MarginPadding { Left = 65, Right = 176 },
@@ -330,9 +335,9 @@ namespace osu.Game.Online.Leaderboards
                     avatar = new MaskedWrapper(
                         innerAvatar = new ClickableAvatar(user)
                         {
-                            X = -10,
-                            Y = -10,
-                            Scale = new Vector2(1.2f),
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Scale = new Vector2(1.1f),
                             Shear = -shear,
                             RelativeSizeAxes = Axes.Both,
                         })
@@ -340,36 +345,29 @@ namespace osu.Game.Online.Leaderboards
                         RelativeSizeAxes = Axes.None,
                         Size = new Vector2(HEIGHT)
                     },
-                    new Container
+                    new FillFlowContainer
                     {
-                        Shear = -shear,
-                        RelativeSizeAxes = Axes.Y,
-                        AutoSizeAxes = Axes.X,
-                        Position = new Vector2(HEIGHT - edge_margin, 0f),
+                        X = 60,
+                        Anchor = Anchor.CentreLeft,
+                        Origin = Anchor.CentreLeft,
+                        Direction = FillDirection.Vertical,
+                        AutoSizeAxes = Axes.Both,
+                        Spacing = new Vector2(-3, 0),
                         Children = new Drawable[]
                         {
-                            nameLabel = new OsuSpriteText
-                            {
-                                Text = user.Username,
-                                Font = OsuFont.GetFont(size: 23, weight: FontWeight.Bold, italics: true)
-                            },
                             new FillFlowContainer
                             {
-                                Anchor = Anchor.BottomLeft,
-                                Origin = Anchor.BottomLeft,
+                                Shear = -shear,
                                 AutoSizeAxes = Axes.Both,
-                                Direction = FillDirection.Horizontal,
+                                Direction = FillDirection.Vertical,
                                 Spacing = new Vector2(10f, 0f),
                                 Children = new Drawable[]
                                 {
                                     flagBadgeAndDateContainer = new FillFlowContainer
                                     {
-                                        Anchor = Anchor.CentreLeft,
-                                        Origin = Anchor.CentreLeft,
-                                        RelativeSizeAxes = Axes.Y,
                                         Direction = FillDirection.Horizontal,
                                         Spacing = new Vector2(5f, 0f),
-                                        Width = 87f,
+                                        Size = new Vector2(87, 16),
                                         Masking = true,
                                         Children = new Drawable[]
                                         {
@@ -377,16 +375,21 @@ namespace osu.Game.Online.Leaderboards
                                             {
                                                 Anchor = Anchor.CentreLeft,
                                                 Origin = Anchor.CentreLeft,
-                                                Size = new Vector2(28, 20),
+                                                Size = new Vector2(24, 16),
                                             },
                                             new DateLabel(Score.Date)
                                             {
                                                 Anchor = Anchor.CentreLeft,
                                                 Origin = Anchor.CentreLeft,
-                                            },
-                                        },
+                                            }
+                                        }
                                     },
-                                    new FillFlowContainer
+                                    nameLabel = new OsuSpriteText
+                                    {
+                                        Text = user.Username,
+                                        Font = OsuFont.GetFont(size: 23, weight: FontWeight.SemiBold)
+                                    },
+                                    /*new FillFlowContainer
                                     {
                                         Origin = Anchor.CentreLeft,
                                         Anchor = Anchor.CentreLeft,
@@ -394,7 +397,7 @@ namespace osu.Game.Online.Leaderboards
                                         Direction = FillDirection.Horizontal,
                                         Margin = new MarginPadding { Left = edge_margin },
                                         Children = statisticsLabels
-                                    },
+                                    },*/
                                 },
                             },
                         },
@@ -436,11 +439,10 @@ namespace osu.Game.Online.Leaderboards
                 if (Score.Mods.Length > 0 && modsContainer.Any(s => s.IsHovered) && songSelect != null)
                     items.Add(new OsuMenuItem("Use these mods", MenuItemType.Highlighted, () => songSelect.Mods.Value = Score.Mods));
 
-                if (Score.Files.Count > 0)
-                {
-                    items.Add(new OsuMenuItem("Export", MenuItemType.Standard, () => new LegacyScoreExporter(storage).Export(Score)));
-                    items.Add(new OsuMenuItem(CommonStrings.ButtonsDelete, MenuItemType.Destructive, () => dialogOverlay?.Push(new LocalScoreDeleteDialog(Score))));
-                }
+                if (Score.Files.Count <= 0) return items.ToArray();
+
+                items.Add(new OsuMenuItem("Export", MenuItemType.Standard, () => new LegacyScoreExporter(storage).Export(Score)));
+                items.Add(new OsuMenuItem(CommonStrings.ButtonsDelete, MenuItemType.Destructive, () => dialogOverlay?.Push(new LocalScoreDeleteDialog(Score))));
 
                 return items.ToArray();
             }
