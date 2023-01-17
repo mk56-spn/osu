@@ -87,6 +87,13 @@ namespace osu.Game.Tests.Visual.Menus
                     () => unreadNotificationCount.Value = count);
         }
 
+        [Test]
+        public void TestColourChange()
+        {
+            AddStep("Set colour red", () => toolbar.ColourProvider = OverlayColourScheme.Red);
+            AddStep("Set colour red", () => toolbar.ColourProvider = OverlayColourScheme.Green);
+        }
+
         [TestCase(false)]
         [TestCase(true)]
         public void TestRulesetSwitchingShortcut(bool toolbarHidden)

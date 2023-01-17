@@ -23,8 +23,19 @@ namespace osu.Game.Overlays.Toolbar
 {
     public partial class Toolbar : OverlayContainer, IKeyBindingHandler<GlobalAction>
     {
-        public const float HEIGHT = 40;
+        public const float HEIGHT = 50;
         public const float TOOLTIP_HEIGHT = 30;
+
+        public OverlayColourScheme ColourProvider
+        {
+            set => colourProvider.Value.ColourScheme = value;
+        }
+
+        [Cached]
+        private Bindable<OverlayColourProvider> colourProvider = new Bindable<OverlayColourProvider>
+        {
+            Value = ,
+        };
 
         /// <summary>
         /// Whether the user hid this <see cref="Toolbar"/> with <see cref="GlobalAction.ToggleToolbar"/>.
@@ -59,6 +70,8 @@ namespace osu.Game.Overlays.Toolbar
             AlwaysPresent = false;
         }
 
+        private Box leftBackground = null!;
+
         [Resolved]
         private Bindable<RulesetInfo> ruleset { get; set; }
 
@@ -92,9 +105,8 @@ namespace osu.Game.Overlays.Toolbar
                                 Depth = float.MinValue,
                                 Children = new Drawable[]
                                 {
-                                    new Box
+                                    leftBackground = new Box
                                     {
-                                        Colour = OsuColour.Gray(0.1f),
                                         RelativeSizeAxes = Axes.Both,
                                     },
                                     new FillFlowContainer
@@ -131,8 +143,7 @@ namespace osu.Game.Overlays.Toolbar
                                     },
                                     new Box
                                     {
-                                        Colour = ColourInfo.GradientHorizontal(OsuColour.Gray(0.1f).Opacity(0), OsuColour.Gray(0.1f)),
-                                        Width = 50,
+                                        Width = HEIGHT,
                                         RelativeSizeAxes = Axes.Y,
                                         Anchor = Anchor.TopRight,
                                         Origin = Anchor.TopRight,
@@ -150,7 +161,6 @@ namespace osu.Game.Overlays.Toolbar
                                 {
                                     new Box
                                     {
-                                        Colour = OsuColour.Gray(0.1f),
                                         RelativeSizeAxes = Axes.Both,
                                     },
                                     new FillFlowContainer
@@ -201,15 +211,23 @@ namespace osu.Game.Overlays.Toolbar
             base.LoadComplete();
 
             rulesetSelector.Current.BindTo(ruleset);
+
+            colourProvider.BindValueChanged(colour => updateColour());
+        }
+
+        private void updateColour()
+        {
+            leftBackground.FadeColour(colourProvider.Value.Background3);
         }
 
         public partial class ToolbarBackground : Container
         {
             public Bindable<bool> ShowGradient { get; } = new BindableBool();
 
-            private readonly Box gradientBackground;
+            private Box gradientBackground;
 
-            public ToolbarBackground()
+            [BackgroundDependencyLoader]
+            private void load(Bindable<OverlayColourProvider> colourProvider)
             {
                 RelativeSizeAxes = Axes.Both;
                 Children = new Drawable[]
@@ -217,7 +235,7 @@ namespace osu.Game.Overlays.Toolbar
                     new Box
                     {
                         RelativeSizeAxes = Axes.Both,
-                        Colour = OsuColour.Gray(0.1f),
+                        Colour = colourProvider.Value.Background4
                     },
                     gradientBackground = new Box
                     {
