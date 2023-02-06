@@ -28,7 +28,7 @@ namespace osu.Game.Graphics.UserInterface
         private DrawableRuleset drawableRuleset = null!;
         private Ruleset ruleset = null!;
 
-        protected MasterGameplayClockContainer GameplayClockContainer = null!;
+        protected GameplayClockContainer GameplayClockContainer = null!;
 
         [Resolved]
         private Bindable<RulesetInfo> targetRuleset { get; set; } = null!;
@@ -59,10 +59,9 @@ namespace osu.Game.Graphics.UserInterface
 
             var rulesetSkinProvider = new RulesetSkinProvidingContainer(currentRuleset, playableBeatmap, beatmap.Value.Skin);
 
-            InternalChild = GameplayClockContainer = new MasterGameplayClockContainer(beatmap.Value, 0);
+            InternalChild = GameplayClockContainer = new GameplayClockContainer(new FramedBeatmapClock());
 
             GameplayClockContainer.Add(rulesetSkinProvider);
-            GameplayClockContainer.Start();
 
             //We dont want the preview to use mods.
             drawableRuleset = currentRuleset.CreateDrawableRulesetWith(playableBeatmap, new[] { modAutoplay! });

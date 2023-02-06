@@ -3,6 +3,7 @@
 
 using NUnit.Framework;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.ObjectExtensions;
 using osu.Framework.Graphics;
 using osu.Game.Beatmaps;
 using osu.Game.Graphics.UserInterface;
@@ -37,9 +38,20 @@ namespace osu.Game.Tests.Visual.Components
             AddStep("Start", () => gameplayPreview.GameplayClockContainer.Start());
         }
 
+        [Test]
+        public void Seek()
+        {
+            AddSliderStep("Test seek", 0, 100000f, 0, f =>
+            {
+                if (gameplayPreview.GameplayClockContainer.IsNull()) return;
+
+                gameplayPreview.GameplayClockContainer.Seek(f);
+            });
+        }
+
         private partial class TestGameplayPreview : GameplayPreview
         {
-            public new MasterGameplayClockContainer GameplayClockContainer => base.GameplayClockContainer;
+            public new GameplayClockContainer GameplayClockContainer => base.GameplayClockContainer;
 
             public TestGameplayPreview(IBindable<WorkingBeatmap> beatmap)
                 : base(beatmap)
