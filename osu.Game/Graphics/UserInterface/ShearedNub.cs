@@ -6,6 +6,7 @@ using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
@@ -16,7 +17,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Graphics.UserInterface
 {
-    public partial class ShearedNub : Container, IHasCurrentValue<bool>, IHasAccentColour
+    public partial class ShearedNub : Container, IHasCurrentValue<bool>
     {
         protected const float BORDER_WIDTH = 3;
 
@@ -45,11 +46,14 @@ namespace osu.Game.Graphics.UserInterface
                 RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
-                Child = fill = new Box
+                Children = new Drawable[]
                 {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0,
-                    AlwaysPresent = true,
+                    fill = new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Alpha = 0,
+                        AlwaysPresent = true,
+                    },
                 }
             };
         }
@@ -91,7 +95,7 @@ namespace osu.Game.Graphics.UserInterface
 
                 if (value)
                 {
-                    main.FadeColour(GlowingAccentColour.Lighten(0.1f), 40, Easing.OutQuint)
+                    main.FadeColour(lightenedColour(), 40, Easing.OutQuint)
                         .Then()
                         .FadeColour(GlowingAccentColour, 800, Easing.OutQuint);
 
@@ -103,6 +107,19 @@ namespace osu.Game.Graphics.UserInterface
                 {
                     main.FadeEdgeEffectTo(GlowColour.Opacity(0), 800, Easing.OutQuint);
                     main.FadeColour(AccentColour, 800, Easing.OutQuint);
+                }
+
+                ColourInfo lightenedColour()
+                {
+                    return new ColourInfo
+                    {
+                        BottomLeft = lightened(glowingAccentColour.BottomLeft),
+                        TopLeft = lightened(glowingAccentColour.TopLeft),
+                        BottomRight = lightened(glowingAccentColour.BottomRight),
+                        TopRight = lightened(glowingAccentColour.TopRight)
+                    };
+
+                    Color4 lightened(Colour4 colour) => colour.ToLinear().Lighten(0.1f);
                 }
             }
         }
@@ -121,9 +138,9 @@ namespace osu.Game.Graphics.UserInterface
             }
         }
 
-        private Color4 accentColour;
+        private ColourInfo accentColour;
 
-        public Color4 AccentColour
+        public ColourInfo AccentColour
         {
             get => accentColour;
             set
@@ -134,9 +151,9 @@ namespace osu.Game.Graphics.UserInterface
             }
         }
 
-        private Color4 glowingAccentColour;
+        private ColourInfo glowingAccentColour;
 
-        public Color4 GlowingAccentColour
+        public ColourInfo GlowingAccentColour
         {
             get => glowingAccentColour;
             set
