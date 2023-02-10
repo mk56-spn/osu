@@ -22,8 +22,8 @@ namespace osu.Game.Graphics.UserInterface
         /// </summary>
         public Bindable<double> LowerBound
         {
-            get => lowerBound.Current;
-            set => lowerBound.Current = value;
+            get => LowerSlider.Current;
+            set => LowerSlider.Current = value;
         }
 
         /// <summary>
@@ -31,8 +31,8 @@ namespace osu.Game.Graphics.UserInterface
         /// </summary>
         public Bindable<double> UpperBound
         {
-            get => upperBound.Current;
-            set => upperBound.Current = value;
+            get => UpperSlider.Current;
+            set => UpperSlider.Current = value;
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace osu.Game.Graphics.UserInterface
 
         public float NubWidth
         {
-            set => lowerBound.NubWidth = upperBound.NubWidth = value;
+            set => LowerSlider.NubWidth = UpperSlider.NubWidth = value;
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace osu.Game.Graphics.UserInterface
         /// </summary>
         public string DefaultStringLowerBound
         {
-            set => lowerBound.DefaultString = value;
+            set => LowerSlider.DefaultString = value;
         }
 
         /// <summary>
@@ -69,30 +69,30 @@ namespace osu.Game.Graphics.UserInterface
         /// </summary>
         public string DefaultStringUpperBound
         {
-            set => upperBound.DefaultString = value;
+            set => UpperSlider.DefaultString = value;
         }
 
         public LocalisableString DefaultTooltipLowerBound
         {
-            set => lowerBound.DefaultTooltip = value;
+            set => LowerSlider.DefaultTooltip = value;
         }
 
         public LocalisableString DefaultTooltipUpperBound
         {
-            set => upperBound.DefaultTooltip = value;
+            set => UpperSlider.DefaultTooltip = value;
         }
 
         public string TooltipSuffix
         {
-            set => upperBound.TooltipSuffix = lowerBound.TooltipSuffix = value;
+            set => UpperSlider.TooltipSuffix = LowerSlider.TooltipSuffix = value;
         }
 
         private float minRange = 0.1f;
 
         private readonly OsuSpriteText label;
 
-        private readonly LowerBoundSlider lowerBound;
-        private readonly UpperBoundSlider upperBound;
+        protected readonly LowerBoundSlider LowerSlider;
+        protected readonly UpperBoundSlider UpperSlider;
 
         public ShearedRangeSlider()
         {
@@ -104,13 +104,13 @@ namespace osu.Game.Graphics.UserInterface
                 {
                     Font = OsuFont.GetFont(size: 14),
                 },
-                upperBound = new UpperBoundSlider
+                UpperSlider = new UpperBoundSlider
                 {
                     KeyboardStep = 0.1f,
                     RelativeSizeAxes = Axes.X,
                     Y = vertical_offset,
                 },
-                lowerBound = new LowerBoundSlider
+                LowerSlider = new LowerBoundSlider
                 {
                     KeyboardStep = 0.1f,
                     RelativeSizeAxes = Axes.X,
@@ -123,11 +123,11 @@ namespace osu.Game.Graphics.UserInterface
         {
             base.LoadComplete();
 
-            lowerBound.Current.ValueChanged += min => upperBound.Current.Value = Math.Max(min.NewValue + minRange, upperBound.Current.Value);
-            upperBound.Current.ValueChanged += max => lowerBound.Current.Value = Math.Min(max.NewValue - minRange, lowerBound.Current.Value);
+            LowerSlider.Current.ValueChanged += min => UpperSlider.Current.Value = Math.Max(min.NewValue + minRange, UpperSlider.Current.Value);
+            UpperSlider.Current.ValueChanged += max => LowerSlider.Current.Value = Math.Min(max.NewValue - minRange, LowerSlider.Current.Value);
         }
 
-        private partial class LowerBoundSlider : BoundSlider
+        public partial class LowerBoundSlider : BoundSlider
         {
             protected override void LoadComplete()
             {
@@ -142,18 +142,19 @@ namespace osu.Game.Graphics.UserInterface
                 && screenSpacePos.X <= Nub.ScreenSpaceDrawQuad.TopRight.X;
         }
 
-        private partial class UpperBoundSlider : BoundSlider
+        public partial class UpperBoundSlider : BoundSlider
         {
             public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) =>
                 base.ReceivePositionalInputAt(screenSpacePos)
                 && screenSpacePos.X >= Nub.ScreenSpaceDrawQuad.TopLeft.X;
         }
 
-        protected partial class BoundSlider : ShearedSliderBar<double>
+        public partial class BoundSlider : ShearedSliderBar<double>
         {
             public string? DefaultString;
             public LocalisableString? DefaultTooltip;
             public string? TooltipSuffix;
+            public new ShearedNub Nub => base.Nub;
             public float NubWidth { get; set; } = ShearedNub.HEIGHT;
 
             public override LocalisableString TooltipText =>

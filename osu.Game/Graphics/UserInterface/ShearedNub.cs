@@ -113,13 +113,13 @@ namespace osu.Game.Graphics.UserInterface
                 {
                     return new ColourInfo
                     {
-                        BottomLeft = lightened(glowingAccentColour.BottomLeft),
+                        BottomLeft = lightened(accentColour.BottomLeft),
                         TopLeft = lightened(glowingAccentColour.TopLeft),
                         BottomRight = lightened(glowingAccentColour.BottomRight),
                         TopRight = lightened(glowingAccentColour.TopRight)
                     };
 
-                    Color4 lightened(Colour4 colour) => colour.ToLinear().Lighten(0.1f);
+                    Color4 lightened(Colour4 colour) => colour.Lighten(0.3f);
                 }
             }
         }
